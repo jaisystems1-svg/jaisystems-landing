@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JAISystems — AI Revenue Recovery for Local Businesses</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #060A12;
+  --bg2: #0B1220;
+  --card: #0F1A2E;
+  --border: rgba(0,180,255,0.12);
+  --accent: #00B4FF;
+  --accent2: #00FFB2;
+  --gold: #FFB800;
+  --text: #E8F0FF;
+  --muted: #7A8FAD;
+  --danger: #FF4D6D;
+  --glow: 0 0 40px rgba(0,180,255,0.25);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 400;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ── Custom cursor ── */
+.cursor {
+  position: fixed; width: 12px; height: 12px;
+  background: var(--accent); border-radius: 50%;
+  pointer-events: none; z-index: 9999;
+  transition: transform 0.15s ease, opacity 0.15s;
+  mix-blend-mode: screen;
+}
+.cursor-ring {
+  position: fixed; width: 36px; height: 36px;
+  border: 1.5px solid var(--accent); border-radius: 50%;
+  pointer-events: none; z-index: 9998;
+  transition: transform 0.35s cubic-bezier(.23,1,.32,1), opacity 0.2s;
+  opacity: 0.5;
+}
+
+/* ── Noise overlay ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 1; opacity: 0.4;
+}
+
+/* ── Grid lines ── */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    linear-gradient(rgba(0,180,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,180,255,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none; z-index: 0;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 20px 60px;
+  display: flex; align-items: center; justify-content: space-between;
+  backdrop-filter: blur(20px);
+  background: rgba(6,10,18,0.85);
+  border-bottom: 1px solid var(--border);
+  transition: padding 0.3s;
+}
+.nav-logo {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800; font-size: 1.4rem;
+  color: var(--text); text-decoration: none;
+  letter-spacing: -0.5px;
+}
+.nav-logo span { color: var(--accent); }
+.nav-links { display: flex; gap: 36px; list-style: none; }
+.nav-links a {
+  color: var(--muted); text-decoration: none;
+  font-size: 0.85rem; font-weight: 500;
+  letter-spacing: 0.05em; text-transform: uppercase;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--accent); }
+.nav-cta {
+  background: var(--accent); color: var(--bg);
+  border: none; padding: 10px 24px;
+  font-family: 'Syne', sans-serif;
+  font-weight: 700; font-size: 0.85rem;
+  letter-spacing: 0.05em; cursor: none;
+  clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  transition: background 0.2s, transform 0.2s;
+  text-decoration: none; display: inline-block;
+}
+.nav-cta:hover { background: var(--accent2); transform: scale(1.04); }
+
+/* ── HERO ── */
+#hero {
+  position: relative; z-index: 2;
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  padding: 140px 40px 100px;
+  overflow: hidden;
+}
+
+.hero-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  animation: pulse-orb 8s ease-in-out infinite alternate;
+}
+.orb1 { width: 600px; height: 600px; background: rgba(0,180,255,0.12); top: -100px; left: -100px; }
+.orb2 { width: 500px; height: 500px; background: rgba(0,255,178,0.08); bottom: -100px; right: -80px; animation-delay: -4s; }
+.orb3 { width: 300px; height: 300px; background: rgba(255,184,0,0.06); top: 50%; left: 50%; transform: translate(-50%,-50%); animation-delay: -2s; }
+
+@keyframes pulse-orb {
+  0% { transform: scale(1) translate(0,0); opacity: 0.7; }
+  100% { transform: scale(1.2) translate(20px, -20px); opacity: 1; }
+}
+
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(0,180,255,0.1);
+  border: 1px solid rgba(0,180,255,0.2);
+  padding: 7px 18px; border-radius: 100px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem; color: var(--accent);
+  letter-spacing: 0.12em; text-transform: uppercase;
+  margin-bottom: 28px;
+  animation: fadeUp 0.8s 0.2s both;
+}
+.hero-eyebrow::before {
+  content: ''; width: 6px; height: 6px;
+  background: var(--accent2); border-radius: 50%;
+  animation: blink 1.5s infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+.hero-h1 {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: clamp(3rem, 7vw, 6.5rem);
+  line-height: 0.95;
+  letter-spacing: -2px;
+  margin-bottom: 28px;
+  animation: fadeUp 0.8s 0.35s both;
+}
+.hero-h1 .line1 { display: block; color: var(--text); }
+.hero-h1 .line2 {
+  display: block;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-h1 .line3 { display: block; color: var(--text); }
+
+.hero-sub {
+  max-width: 600px;
+  font-size: 1.15rem; font-weight: 300;
+  color: var(--muted); line-height: 1.7;
+  margin: 0 auto 48px;
+  animation: fadeUp 0.8s 0.5s both;
+}
+.hero-sub strong { color: var(--text); font-weight: 500; }
+
+.hero-ctas {
+  display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+  animation: fadeUp 0.8s 0.65s both;
+}
+
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--accent); color: var(--bg);
+  font-family: 'Syne', sans-serif; font-weight: 700;
+  font-size: 1rem; padding: 18px 40px;
+  clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
+  text-decoration: none; transition: all 0.25s;
+  position: relative; overflow: hidden;
+}
+.btn-primary::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, transparent 30%, rgba(255,255,255,0.15) 50%, transparent 70%);
+  transform: translateX(-100%);
+  transition: transform 0.5s;
+}
+.btn-primary:hover::after { transform: translateX(100%); }
+.btn-primary:hover { background: var(--accent2); transform: translateY(-2px); box-shadow: 0 16px 40px rgba(0,180,255,0.3); }
+
+.btn-ghost {
+  display: inline-flex; align-items: center; gap: 10px;
+  border: 1px solid var(--border); color: var(--text);
+  font-family: 'Syne', sans-serif; font-weight: 600;
+  font-size: 1rem; padding: 17px 36px;
+  clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
+  text-decoration: none; transition: all 0.25s;
+  background: transparent;
+}
+.btn-ghost:hover { border-color: var(--accent); color: var(--accent); background: rgba(0,180,255,0.05); }
+
+.hero-stats {
+  display: flex; gap: 60px; justify-content: center; flex-wrap: wrap;
+  margin-top: 80px;
+  padding-top: 60px;
+  border-top: 1px solid var(--border);
+  animation: fadeUp 0.8s 0.8s both;
+}
+.stat { text-align: center; }
+.stat-val {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800; font-size: 2.8rem;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text; line-height: 1;
+  display: block;
+}
+.stat-label { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 6px; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── SECTION COMMON ── */
+section { position: relative; z-index: 2; }
+.container { max-width: 1100px; margin: 0 auto; padding: 0 40px; }
+.section-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem; color: var(--accent);
+  letter-spacing: 0.15em; text-transform: uppercase;
+  margin-bottom: 14px;
+  display: block;
+}
+.section-h2 {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800; font-size: clamp(2rem, 4vw, 3.2rem);
+  line-height: 1.05; letter-spacing: -1px;
+  margin-bottom: 16px;
+}
+.section-sub {
+  color: var(--muted); font-size: 1.05rem;
+  line-height: 1.7; max-width: 560px;
+}
+
+/* ── PROBLEM SECTION ── */
+#problem { padding: 120px 0; }
+.problem-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 2px;
+  margin-top: 64px;
+}
+.prob-card {
+  background: var(--card);
+  padding: 40px; position: relative; overflow: hidden;
+  transition: background 0.3s;
+}
+.prob-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--danger), transparent);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.4s;
+}
+.prob-card:hover::before { transform: scaleX(1); }
+.prob-card:hover { background: rgba(15,26,46,0.9); }
+.prob-icon { font-size: 2rem; margin-bottom: 16px; display: block; }
+.prob-title {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700; font-size: 1.15rem;
+  margin-bottom: 10px; color: var(--text);
+}
+.prob-desc { color: var(--muted); font-size: 0.9rem; line-height: 1.7; }
+.prob-card .loss {
+  display: inline-block; margin-top: 14px;
+  color: var(--danger); font-family: 'DM Mono', monospace;
+  font-size: 0.8rem; font-weight: 500;
+}
+
+/* ── HOW IT WORKS ── */
+#how { padding: 120px 0; background: linear-gradient(180deg, transparent, rgba(0,180,255,0.02), transparent); }
+.steps-wrap { margin-top: 64px; position: relative; }
+.steps-line {
+  position: absolute; left: 39px; top: 0; bottom: 0; width: 1px;
+  background: linear-gradient(180deg, var(--accent), var(--accent2), transparent);
+}
+.step {
+  display: flex; gap: 40px; margin-bottom: 52px;
+  opacity: 0; transform: translateX(-20px);
+  transition: opacity 0.6s, transform 0.6s;
+}
+.step.visible { opacity: 1; transform: none; }
+.step-num {
+  flex-shrink: 0;
+  width: 80px; height: 80px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Syne', sans-serif; font-weight: 800;
+  font-size: 1.6rem; color: var(--accent);
+  position: relative; z-index: 1;
+  clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+  transition: background 0.3s, box-shadow 0.3s;
+}
+.step:hover .step-num {
+  background: var(--accent); color: var(--bg);
+  box-shadow: 0 0 30px rgba(0,180,255,0.4);
+}
+.step-body { padding-top: 16px; }
+.step-title {
+  font-family: 'Syne', sans-serif; font-weight: 700;
+  font-size: 1.3rem; margin-bottom: 8px;
+}
+.step-desc { color: var(--muted); line-height: 1.7; max-width: 500px; }
+
+/* ── SERVICES ── */
+#services { padding: 120px 0; }
+.services-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px;
+  margin-top: 64px; background: var(--border);
+}
+.svc-card {
+  background: var(--bg); padding: 44px 36px;
+  transition: background 0.3s;
+  position: relative; overflow: hidden;
+}
+.svc-card::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.4s;
+}
+.svc-card:hover::after { transform: scaleX(1); }
+.svc-card:hover { background: var(--card); }
+.svc-icon {
+  width: 52px; height: 52px;
+  background: rgba(0,180,255,0.1);
+  border: 1px solid rgba(0,180,255,0.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem;
+  clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+  margin-bottom: 24px;
+}
+.svc-title {
+  font-family: 'Syne', sans-serif; font-weight: 700;
+  font-size: 1.2rem; margin-bottom: 12px;
+}
+.svc-desc { color: var(--muted); font-size: 0.9rem; line-height: 1.7; margin-bottom: 24px; }
+.svc-tag {
+  display: inline-block;
+  font-family: 'DM Mono', monospace; font-size: 0.7rem;
+  color: var(--accent2); border: 1px solid rgba(0,255,178,0.2);
+  padding: 4px 12px; letter-spacing: 0.08em;
+}
+
+/* ── PRICING ── */
+#pricing { padding: 120px 0; }
+.pricing-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+  margin-top: 64px; max-width: 800px; margin-left: auto; margin-right: auto;
+}
+.price-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  padding: 48px 40px;
+  position: relative; overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.price-card:hover { transform: translateY(-6px); box-shadow: 0 24px 60px rgba(0,0,0,0.4); }
+.price-card.featured {
+  border-color: var(--accent);
+  box-shadow: 0 0 40px rgba(0,180,255,0.15);
+}
+.price-card.featured::before {
+  content: 'MOST POPULAR';
+  position: absolute; top: 20px; right: 20px;
+  font-family: 'DM Mono', monospace; font-size: 0.65rem;
+  color: var(--bg); background: var(--accent);
+  padding: 4px 12px; letter-spacing: 0.1em;
+  clip-path: polygon(4px 0%, 100% 0%, calc(100% - 4px) 100%, 0% 100%);
+}
+.price-tier {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.75rem; color: var(--accent);
+  letter-spacing: 0.1em; text-transform: uppercase;
+  margin-bottom: 20px;
+}
+.price-amount {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800; font-size: 3.2rem;
+  line-height: 1; margin-bottom: 6px;
+  color: var(--text);
+}
+.price-amount sup { font-size: 1.4rem; vertical-align: top; margin-top: 8px; color: var(--accent); }
+.price-recur {
+  color: var(--muted); font-size: 0.85rem;
+  margin-bottom: 32px; display: block;
+}
+.price-features { list-style: none; margin-bottom: 36px; }
+.price-features li {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.9rem; color: var(--muted);
+  display: flex; align-items: center; gap: 10px;
+}
+.price-features li::before {
+  content: '→';
+  color: var(--accent2); font-family: 'DM Mono', monospace;
+  flex-shrink: 0;
+}
+
+/* ── GUARANTEE ── */
+#guarantee { padding: 100px 0; }
+.guarantee-box {
+  background: linear-gradient(135deg, rgba(0,180,255,0.05), rgba(0,255,178,0.03));
+  border: 1px solid rgba(0,180,255,0.15);
+  padding: 64px;
+  display: grid; grid-template-columns: auto 1fr; gap: 48px;
+  align-items: center;
+}
+.guarantee-icon {
+  font-size: 5rem; line-height: 1;
+}
+.guarantee-title {
+  font-family: 'Syne', sans-serif; font-weight: 800;
+  font-size: 2rem; margin-bottom: 16px;
+}
+.guarantee-title span { color: var(--accent2); }
+.guarantee-text { color: var(--muted); line-height: 1.8; font-size: 1.05rem; }
+.guarantee-text strong { color: var(--text); }
+
+/* ── SOCIAL PROOF ── */
+#proof { padding: 120px 0; }
+.proof-strip {
+  display: flex; gap: 2px; margin-top: 64px;
+  overflow-x: auto;
+}
+.proof-card {
+  flex-shrink: 0; min-width: 320px;
+  background: var(--card); padding: 36px;
+  border-top: 2px solid var(--accent);
+}
+.proof-stars { color: var(--gold); font-size: 1rem; margin-bottom: 16px; letter-spacing: 2px; }
+.proof-quote { font-size: 0.95rem; line-height: 1.75; color: var(--text); margin-bottom: 20px; font-style: italic; }
+.proof-author { color: var(--muted); font-size: 0.8rem; }
+.proof-author strong { color: var(--accent); font-style: normal; display: block; font-size: 0.9rem; margin-bottom: 2px; }
+
+/* ── CONTACT / CTA ── */
+#contact { padding: 140px 0; }
+.cta-wrap {
+  text-align: center; max-width: 720px; margin: 0 auto;
+}
+.cta-h2 {
+  font-family: 'Syne', sans-serif; font-weight: 800;
+  font-size: clamp(2.2rem, 5vw, 4rem);
+  line-height: 1; letter-spacing: -1.5px;
+  margin-bottom: 20px;
+}
+.cta-h2 span {
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.cta-sub { color: var(--muted); font-size: 1.1rem; line-height: 1.7; margin-bottom: 52px; }
+
+.contact-methods {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1px; background: var(--border);
+  margin-top: 60px;
+}
+.contact-item {
+  background: var(--card); padding: 32px 24px; text-align: center;
+  text-decoration: none; transition: background 0.3s;
+  display: block;
+}
+.contact-item:hover { background: rgba(0,180,255,0.05); }
+.contact-emoji { font-size: 2rem; display: block; margin-bottom: 12px; }
+.contact-type {
+  font-family: 'DM Mono', monospace; font-size: 0.7rem;
+  color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase;
+  margin-bottom: 8px; display: block;
+}
+.contact-val {
+  color: var(--text); font-size: 0.9rem; font-weight: 500;
+  transition: color 0.2s;
+}
+.contact-item:hover .contact-val { color: var(--accent); }
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 32px 40px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: relative; z-index: 2;
+}
+.footer-brand {
+  font-family: 'Syne', sans-serif; font-weight: 800;
+  font-size: 1rem; color: var(--muted);
+}
+.footer-brand span { color: var(--accent); }
+.footer-note { font-size: 0.8rem; color: var(--muted); }
+
+/* ── SCROLL REVEAL ── */
+.reveal {
+  opacity: 0; transform: translateY(30px);
+  transition: opacity 0.7s cubic-bezier(.23,1,.32,1), transform 0.7s cubic-bezier(.23,1,.32,1);
+}
+.reveal.visible { opacity: 1; transform: none; }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+
+/* ── TICKER ── */
+.ticker-wrap {
+  background: var(--accent); overflow: hidden;
+  padding: 14px 0; position: relative; z-index: 3;
+}
+.ticker {
+  display: flex; gap: 0; white-space: nowrap;
+  animation: ticker 28s linear infinite;
+}
+.ticker-item {
+  font-family: 'Syne', sans-serif; font-weight: 700;
+  font-size: 0.82rem; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--bg);
+  padding: 0 40px;
+}
+.ticker-item::after { content: '  ✦  '; }
+@keyframes ticker { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+
+/* ── NUMBER COUNTER ── */
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  nav { padding: 16px 24px; }
+  .nav-links { display: none; }
+  .container { padding: 0 24px; }
+  .hero-h1 { font-size: clamp(2.4rem, 10vw, 4rem); letter-spacing: -1px; }
+  .hero-sub { font-size: 1rem; }
+  .hero-stats { gap: 32px; }
+  .problem-grid { grid-template-columns: 1fr; }
+  .services-grid { grid-template-columns: 1fr; }
+  .pricing-grid { grid-template-columns: 1fr; }
+  .contact-methods { grid-template-columns: 1fr; }
+  .guarantee-box { grid-template-columns: 1fr; text-align: center; }
+  footer { flex-direction: column; gap: 10px; text-align: center; }
+  .steps-line { display: none; }
+  body { cursor: auto; }
+  .cursor, .cursor-ring { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">JAI<span>Systems</span></a>
+  <ul class="nav-links">
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="https://calendly.com/jaisystems1/30min" target="_blank" class="nav-cta">Book Free Audit →</a>
+</nav>
+
+<!-- TICKER -->
+<div class="ticker-wrap" style="margin-top:72px;">
+  <div class="ticker">
+    <span class="ticker-item">AI Voice Receptionist</span>
+    <span class="ticker-item">Missed-Call Recovery</span>
+    <span class="ticker-item">Instant Lead Follow-Up</span>
+    <span class="ticker-item">Appointment Booking Automation</span>
+    <span class="ticker-item">24/7 AI Receptionist</span>
+    <span class="ticker-item">Revenue Recovery System</span>
+    <span class="ticker-item">Dental & Med Spa Specialists</span>
+    <span class="ticker-item">AI Voice Receptionist</span>
+    <span class="ticker-item">Missed-Call Recovery</span>
+    <span class="ticker-item">Instant Lead Follow-Up</span>
+    <span class="ticker-item">Appointment Booking Automation</span>
+    <span class="ticker-item">24/7 AI Receptionist</span>
+    <span class="ticker-item">Revenue Recovery System</span>
+    <span class="ticker-item">Dental & Med Spa Specialists</span>
+  </div>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-orb orb1"></div>
+  <div class="hero-orb orb2"></div>
+  <div class="hero-orb orb3"></div>
+
+  <div class="hero-eyebrow">AI-Powered Revenue Recovery · Bay Area</div>
+
+  <h1 class="hero-h1">
+    <span class="line1">Stop Losing</span>
+    <span class="line2">Revenue</span>
+    <span class="line3">To Missed Calls</span>
+  </h1>
+
+  <p class="hero-sub">
+    JAISystems builds <strong>AI voice receptionists</strong> that answer every call, follow up instantly, and book more appointments — without hiring more staff.
+  </p>
+
+  <div class="hero-ctas">
+    <a href="https://calendly.com/jaisystems1/30min" target="_blank" class="btn-primary">
+      <span>Book Your Free Revenue Audit</span>
+      <span>→</span>
+    </a>
+    <a href="#how" class="btn-ghost">See How It Works</a>
+  </div>
+
+  <div class="hero-stats">
+    <div class="stat">
+      <span class="stat-val counter" data-target="62">0</span>
+      <span class="stat-label">% of callers won't leave voicemail</span>
+    </div>
+    <div class="stat">
+      <span class="stat-val counter" data-target="5">0</span>
+      <span class="stat-label">X more likely to convert in &lt;5 min</span>
+    </div>
+    <div class="stat">
+      <span class="stat-val counter" data-target="48">0</span>
+      <span class="stat-label">Hour system install guarantee</span>
+    </div>
+    <div class="stat">
+      <span class="stat-val">$0</span>
+      <span class="stat-label">Extra staff required</span>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="container">
+    <span class="section-tag reveal">The Problem</span>
+    <h2 class="section-h2 reveal">Your business is bleeding<br>revenue right now</h2>
+    <p class="section-sub reveal">Every missed call is a potential client walking straight to your competitor. Here's what's happening while you're busy.</p>
+
+    <div class="problem-grid reveal">
+      <div class="prob-card">
+        <span class="prob-icon">📵</span>
+        <div class="prob-title">Missed Calls = Lost Revenue</div>
+        <div class="prob-desc">62% of callers won't leave a voicemail. If your phone goes unanswered, that lead is gone — and they're calling the next business on Google Maps.</div>
+        <span class="loss">↓ Up to $5,000+ lost per month</span>
+      </div>
+      <div class="prob-card">
+        <span class="prob-icon">⏳</span>
+        <div class="prob-title">Slow Follow-Up Kills Conversions</div>
+        <div class="prob-desc">Leads that aren't contacted within 5 minutes are 80% less likely to convert. Most businesses follow up in hours — or days. You're giving your money away.</div>
+        <span class="loss">↓ 80% drop in conversion rate</span>
+      </div>
+      <div class="prob-card">
+        <span class="prob-icon">👤</span>
+        <div class="prob-title">Staff Can't Handle Everything</div>
+        <div class="prob-desc">Your front desk is juggling patients, calls, and admin. They can't be everywhere at once — and every dropped ball costs you a potential client.</div>
+        <span class="loss">↓ 15–30 leads missed per month</span>
+      </div>
+      <div class="prob-card">
+        <span class="prob-icon">😶</span>
+        <div class="prob-title">After-Hours = Dead Zone</div>
+        <div class="prob-desc">80% of people search for services outside business hours. Without 24/7 coverage, you're invisible when most of your potential clients are looking.</div>
+        <span class="loss">↓ 80% of after-hours leads lost</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="container">
+    <span class="section-tag reveal">The Solution</span>
+    <h2 class="section-h2 reveal">Your AI Revenue Recovery<br>System — installed in 48 hrs</h2>
+    <p class="section-sub reveal">A done-for-you system that captures, qualifies, and converts leads automatically — day and night.</p>
+
+    <div class="steps-wrap">
+      <div class="steps-line"></div>
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-body">
+          <div class="step-title">Customer Calls Your Business</div>
+          <div class="step-desc">Whether they call during office hours, after hours, or on weekends — your AI receptionist picks up every single time. No voicemail. No missed opportunity.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-body">
+          <div class="step-title">AI Answers & Qualifies the Lead</div>
+          <div class="step-desc">Your custom AI receptionist greets callers professionally, identifies their needs, and collects all the key info: name, phone, service needed, urgency, and preferred time.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-body">
+          <div class="step-title">Lead Instantly Captured & Notified</div>
+          <div class="step-desc">Lead data goes straight into your CRM. You get an instant email/SMS notification. The prospect receives a booking link automatically — while the intent is red-hot.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <div class="step-body">
+          <div class="step-title">Automated Follow-Up Sequence</div>
+          <div class="step-desc">If they don't book immediately, the system follows up at 2 hours and 24 hours with personalized messages — turning cold leads warm without lifting a finger.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">05</div>
+        <div class="step-body">
+          <div class="step-title">You Get a Daily Revenue Report</div>
+          <div class="step-desc">Every morning you receive a clean summary of all leads captured, calls handled, and appointments booked. Pure clarity on your pipeline — zero admin work.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="container">
+    <span class="section-tag reveal">What We Build</span>
+    <h2 class="section-h2 reveal">AI systems that work<br>while you sleep</h2>
+
+    <div class="services-grid reveal">
+      <div class="svc-card">
+        <div class="svc-icon">📞</div>
+        <div class="svc-title">AI Voice Receptionist</div>
+        <div class="svc-desc">A 24/7 AI agent that answers calls, qualifies leads, and handles FAQs — indistinguishable from a real receptionist. Built on Retell AI for natural, human-like conversations.</div>
+        <span class="svc-tag">CORE SERVICE</span>
+      </div>
+      <div class="svc-card">
+        <div class="svc-icon">⚡</div>
+        <div class="svc-title">Missed-Call Recovery</div>
+        <div class="svc-desc">Instantly detects missed calls and fires a personalized text-back within seconds. Re-engages leads before they move on, turning missed calls into booked appointments.</div>
+        <span class="svc-tag">AUTOMATION</span>
+      </div>
+      <div class="svc-card">
+        <div class="svc-icon">📅</div>
+        <div class="svc-title">Appointment Booking System</div>
+        <div class="svc-desc">Integrates with your scheduling system to let leads book instantly from any touchpoint — phone, text, or website widget. No back-and-forth. No friction.</div>
+        <span class="svc-tag">INTEGRATION</span>
+      </div>
+      <div class="svc-card">
+        <div class="svc-icon">💬</div>
+        <div class="svc-title">Lead Nurture Sequences</div>
+        <div class="svc-desc">Multi-step follow-up via SMS and email that keeps your business top-of-mind until they're ready to book. Automated, personalized, and running on its own.</div>
+        <span class="svc-tag">FOLLOW-UP</span>
+      </div>
+      <div class="svc-card">
+        <div class="svc-icon">🌐</div>
+        <div class="svc-title">AI Talking Website</div>
+        <div class="svc-desc">Transform your website into an interactive AI experience that answers questions, captures leads, and guides visitors to book — 24/7, completely automated.</div>
+        <span class="svc-tag">WEBSITE</span>
+      </div>
+      <div class="svc-card">
+        <div class="svc-icon">📊</div>
+        <div class="svc-title">Daily Performance Reports</div>
+        <div class="svc-desc">Clean, simple daily reports showing every lead captured, call handled, and appointment booked. Know exactly what your AI is generating for your business.</div>
+        <span class="svc-tag">REPORTING</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="container">
+    <span class="section-tag reveal">Transparent Pricing</span>
+    <h2 class="section-h2 reveal">Simple, predictable pricing.<br>ROI from day one.</h2>
+    <p class="section-sub reveal" style="margin: 0 auto 0; text-align:center;">One missed appointment can cost more than your entire monthly retainer. This pays for itself.</p>
+
+    <div class="pricing-grid reveal">
+      <div class="price-card">
+        <div class="price-tier">Starter System</div>
+        <div class="price-amount"><sup>$</sup>497</div>
+        <span class="price-recur">setup + $297/month</span>
+        <ul class="price-features">
+          <li>Missed-call text-back system</li>
+          <li>AI receptionist script</li>
+          <li>Lead capture & CRM setup</li>
+          <li>Booking link integration</li>
+          <li>Daily lead summary emails</li>
+          <li>7-day optimization included</li>
+        </ul>
+        <a href="https://calendly.com/jaisystems1/30min" target="_blank" class="btn-ghost" style="width:100%;text-align:center;display:block;clip-path:none;border-radius:2px;">Get Started →</a>
+      </div>
+      <div class="price-card featured">
+        <div class="price-tier">Full Revenue Recovery</div>
+        <div class="price-amount"><sup>$</sup>997</div>
+        <span class="price-recur">setup + $497–$750/month</span>
+        <ul class="price-features">
+          <li>Everything in Starter</li>
+          <li>Full AI voice receptionist</li>
+          <li>Website AI chat widget</li>
+          <li>Review request automation</li>
+          <li>Multi-step lead nurture sequences</li>
+          <li>Monthly performance report</li>
+        </ul>
+        <a href="https://calendly.com/jaisystems1/30min" target="_blank" class="btn-primary" style="width:100%;text-align:center;display:block;clip-path:none;">Book Free Audit →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GUARANTEE -->
+<section id="guarantee">
+  <div class="container">
+    <div class="guarantee-box reveal">
+      <div class="guarantee-icon">🛡️</div>
+      <div>
+        <div class="guarantee-title">The <span>30-Day Results</span> Guarantee</div>
+        <p class="guarantee-text">
+          If we don't help you capture at least <strong>10 missed leads or appointment opportunities in your first 30 days</strong>, we'll keep optimizing your system for free until we do. No excuses. No fine print. We only win when you win.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOCIAL PROOF -->
+<section id="proof">
+  <div class="container">
+    <span class="section-tag reveal">Built For Local Businesses</span>
+    <h2 class="section-h2 reveal">The niches we specialize in</h2>
+    <div class="proof-strip reveal" style="margin-top:48px;gap:16px;overflow:visible;display:grid;grid-template-columns:repeat(4,1fr);">
+      <div class="proof-card" style="min-width:0;border-top-color:var(--accent2);">
+        <div style="font-size:2.5rem;margin-bottom:16px;">🦷</div>
+        <div class="prob-title" style="margin-bottom:8px;">Dental Offices</div>
+        <div class="prob-desc">High appointment value. Every missed call is hundreds in lost production. We make sure that never happens.</div>
+      </div>
+      <div class="proof-card" style="min-width:0;border-top-color:var(--gold);">
+        <div style="font-size:2.5rem;margin-bottom:16px;">💆</div>
+        <div class="prob-title" style="margin-bottom:8px;">Med Spas</div>
+        <div class="prob-desc">Lead-sensitive, high-ticket services. Instant follow-up is the difference between a booked consultation and a lost client.</div>
+      </div>
+      <div class="proof-card" style="min-width:0;border-top-color:var(--accent);">
+        <div style="font-size:2.5rem;margin-bottom:16px;">❄️</div>
+        <div class="prob-title" style="margin-bottom:8px;">HVAC Companies</div>
+        <div class="prob-desc">Emergency calls need immediate response. Our AI answers 24/7 so you capture urgent jobs before competitors do.</div>
+      </div>
+      <div class="proof-card" style="min-width:0;border-top-color:var(--danger);">
+        <div style="font-size:2.5rem;margin-bottom:16px;">🔧</div>
+        <div class="prob-title" style="margin-bottom:8px;">Home Services</div>
+        <div class="prob-desc">Plumbers, electricians, roofers — volume lead businesses that need instant follow-up and seamless scheduling.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT / CTA -->
+<section id="contact">
+  <div class="container">
+    <div class="cta-wrap">
+      <span class="section-tag" style="display:block;text-align:center;">Let's Talk</span>
+      <h2 class="cta-h2">Ready to stop leaving<br><span>money on the table?</span></h2>
+      <p class="cta-sub">Book a free 30-minute revenue audit. We'll find exactly where you're losing leads and show you how our AI system fixes it — live, on the call.</p>
+      <a href="https://calendly.com/jaisystems1/30min" target="_blank" class="btn-primary" style="font-size:1.1rem;padding:22px 52px;">
+        <span>Book My Free Revenue Audit</span>
+        <span>→</span>
+      </a>
+      <p style="margin-top:20px;color:var(--muted);font-size:0.85rem;">30 minutes · No pressure · Instant value</p>
+    </div>
+
+    <div class="contact-methods reveal" style="margin-top:64px;">
+      <a href="https://calendly.com/jaisystems1/30min" target="_blank" class="contact-item">
+        <span class="contact-emoji">📅</span>
+        <span class="contact-type">Book a Call</span>
+        <span class="contact-val">Schedule on Calendly</span>
+      </a>
+      <a href="tel:4086348616" class="contact-item">
+        <span class="contact-emoji">📱</span>
+        <span class="contact-type">Call or Text</span>
+        <span class="contact-val">(408) 634-8616</span>
+      </a>
+      <a href="mailto:jaisystems1@gmail.com" class="contact-item">
+        <span class="contact-emoji">✉️</span>
+        <span class="contact-type">Email</span>
+        <span class="contact-val">jaisystems1@gmail.com</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">JAI<span>Systems</span> — AI Revenue Recovery</div>
+  <div class="footer-note">Serving dental, med spa & home service businesses · Bay Area, CA</div>
+  <div class="footer-note" style="color:var(--muted)">© 2025 JAISystems</div>
+</footer>
+
+<script>
+// Cursor
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cursor.style.left = (mx - 6) + 'px';
+  cursor.style.top  = (my - 6) + 'px';
+});
+(function animRing() {
+  rx += (mx - rx - 18) * 0.12;
+  ry += (my - ry - 18) * 0.12;
+  ring.style.left = rx + 'px';
+  ring.style.top  = ry + 'px';
+  requestAnimationFrame(animRing);
+})();
+document.querySelectorAll('a, button, .prob-card, .svc-card, .price-card').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    cursor.style.transform = 'scale(2.5)';
+    ring.style.transform = 'scale(1.5)';
+    ring.style.opacity = '0.8';
+  });
+  el.addEventListener('mouseleave', () => {
+    cursor.style.transform = 'scale(1)';
+    ring.style.transform = 'scale(1)';
+    ring.style.opacity = '0.5';
+  });
+});
+
+// Scroll reveal
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal, .step').forEach(el => obs.observe(el));
+
+// Counter animation
+function animateCounter(el) {
+  const target = parseInt(el.dataset.target);
+  const suffix = el.dataset.suffix || '';
+  const dur = 2000;
+  const start = performance.now();
+  function update(now) {
+    const elapsed = Math.min((now - start) / dur, 1);
+    const eased = 1 - Math.pow(1 - elapsed, 3);
+    el.textContent = Math.round(eased * target) + suffix;
+    if (elapsed < 1) requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
+}
+const countObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      animateCounter(e.target);
+      countObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.5 });
+document.querySelectorAll('.counter').forEach(el => countObs.observe(el));
+
+// Nav shrink
+window.addEventListener('scroll', () => {
+  document.querySelector('nav').style.padding =
+    window.scrollY > 60 ? '12px 60px' : '20px 60px';
+});
+
+// Step stagger
+document.querySelectorAll('.step').forEach((s, i) => {
+  s.style.transitionDelay = (i * 0.12) + 's';
+});
+</script>
+</body>
+</html>
